@@ -6,7 +6,7 @@ SetWorkingDir %A_ScriptDir%
 SetBatchLines -1
 
 FileRead, serverUrl, .env
-whr := ComObjCreate("WinHttp.WinHttpRequest.5.1") ; https://www.autohotkey.com/boards/viewtopic.php?t=72287=
+whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 GuiCount := 1
 colorGreen = 7CFC00
 colorRed = F08080
@@ -19,7 +19,7 @@ ConstructGui:
     Gui %GuiName%: Add, Radio, gBkgGreen vSide%GuiCount% x46 y32 w24 h22 Checked, L
     Gui %GuiName%: Add, Radio, gBkgRed x70 y31 w23 h23, S
     Gui %GuiName%: Add, Button, x56 y0 w49 h23, SEND
-    Gui %GuiName%: Add, Button, gConstructGui x104 y0 w25 h23, + ; intended for adding instances
+    Gui %GuiName%: Add, Button, gConstructGui x104 y0 w25 h23, +
     Gui %GuiName%: Add, ComboBox, vRisk%GuiCount% x0 y32 w42, 10||11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|20|30|31|32|33|34|35|36|37|38|39|40
     Gui %GuiName%: Add, CheckBox, vPriorBar%GuiCount% x95 y32 w31 h23, P
 
