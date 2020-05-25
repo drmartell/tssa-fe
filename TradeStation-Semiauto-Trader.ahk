@@ -50,4 +50,5 @@ ButtonSEND:
 
 GuiEscape:
 GuiClose:
+    ObjRelease(whr)
     ExitApp
