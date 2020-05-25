@@ -3,6 +3,8 @@
 #SingleInstance Force
 SendMode Input
 SetWorkingDir %A_ScriptDir%
+; #Include JSON.ahk
+#Include JSON_FromObj.ahk
 SetBatchLines -1
 
 FileReadLine, serverUrl, .env, 1
@@ -44,9 +46,19 @@ SEND:
     Gui, %thisName%: Submit, NoHide
     sideString%thisName% := Side%thisName% = 1 ? "LONG" : "SHORT"
     priorBarString%thisName% := PriorBar%thisName% = 1 ? "TRUE" : "FALSE"
-    url := serverUrl . "?ticker=" . Ticker%thisName% . "&side=" . sideString%thisName% . "&risk=" . Risk%thisName% . "&priorbar=" . priorBarString%thisName%
-    whr.Open("GET", url, true)
-    whr.Send()
+    ; url := serverUrl . "?ticker=" . Ticker%thisName% . "&side=" . sideString%thisName% . "&risk=" . Risk%thisName% . "&priorbar=" . priorBarString%thisName%
+    xform := "ticker=" . Ticker%thisName% . "&side=" . sideString%thisName% . "&risk=" . Risk%thisName% . "&priorbar=" . priorBarString%thisName%
+    url := serverUrl
+    ; body := ({"ticker": Ticker%thisName%, "side": sideString%thisName%, "risk": Risk%thisName%, "priorbar": priorBarString%thisName%})
+    ; whr.Open("GET", url, true)
+    whr.Open("POST", url, true)
+    whr.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+    ;body = {"species": "value", "name": "item name", "quantity": 300}
+    ;body := JSON_FromObj({"a":"B"})
+    ;data := ({ "data" : "Hello" })
+    ;Body := json_fromobj(data)
+    ;MsgBox %Body%
+    whr.Send(xform)
     whr.WaitForResponse()
     MsgBox % whr.ResponseText
     return
