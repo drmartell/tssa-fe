@@ -1,2 +1,5 @@
 .env
 *.bak
+JSON_FromObj.ahk
+JSON.ahk
+workinprogress.ahk

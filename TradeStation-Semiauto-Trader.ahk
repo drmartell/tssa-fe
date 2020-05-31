@@ -19,7 +19,7 @@ ConstructGui:
     GuiName := "TSSA_Trader" . GuiCount
     Gui, %GuiName%: new
     Gui, %GuiName%: Color, %colorGreen%
-    Gui, %GuiName%: Add, Edit, vTicker%GuiName% x0 y0 w50 h23, TICKER
+    Gui, %GuiName%: Add, Edit, gMakeUpperCase vTicker%GuiName% x0 y0 w50 h23, TICKER
     Gui, %GuiName%: Add, Radio, gBkgGreen vSide%GuiName% x46 y32 w24 h22 Checked, L
     Gui, %GuiName%: Add, Radio, gBkgRed x70 y31 w23 h23, S
     Gui, %GuiName%: Add, Button, gSEND x56 y0 w49 h23, SEND
@@ -28,7 +28,17 @@ ConstructGui:
     Gui, %GuiName%: Add, CheckBox, vPriorBar%GuiName% x95 y32 w31 h23, P
     
     Gui, %GuiName%: +ToolWindow +AlwaysOnTop +Owner
-    Gui, %GuiName%: Show, NoActivate w128 h59, %GuiName%
+    Gui, %GuiName%: Show, w128 h59, %GuiName%
+    ControlFocus, TICKER, %GuiName%
+    return
+
+MakeUpperCase:
+    Sleep, 1000
+    GuiControlGet, %A_GuiControl%
+    StringUpper, upperTicker, %A_GuiControl%
+    If (upperTicker == %A_GuiControl%)
+        return
+    SendInput, ^a{DEL}%upperTicker%
     return
 
 BkgGreen:
@@ -46,21 +56,19 @@ SEND:
     Gui, %thisName%: Submit, NoHide
     sideString%thisName% := Side%thisName% = 1 ? "LONG" : "SHORT"
     priorBarString%thisName% := PriorBar%thisName% = 1 ? "TRUE" : "FALSE"
-    ; url := serverUrl . "?ticker=" . Ticker%thisName% . "&side=" . sideString%thisName% . "&risk=" . Risk%thisName% . "&priorbar=" . priorBarString%thisName%
-    xform := "ticker=" . Ticker%thisName% . "&side=" . sideString%thisName% . "&risk=" . Risk%thisName% . "&priorbar=" . priorBarString%thisName%
     url := serverUrl
-    ; body := ({"ticker": Ticker%thisName%, "side": sideString%thisName%, "risk": Risk%thisName%, "priorbar": priorBarString%thisName%})
-    ; whr.Open("GET", url, true)
+    body := ({"ticker":Ticker%thisName%, "side":sideString%thisName%, "risk":Risk%thisName%, "priorbar":priorBarString%thisName%})
     whr.Open("POST", url, true)
-    whr.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded")
-    ;body = {"species": "value", "name": "item name", "quantity": 300}
-    ;body := JSON_FromObj({"a":"B"})
-    ;data := ({ "data" : "Hello" })
-    ;Body := json_fromobj(data)
-    ;MsgBox %Body%
-    whr.Send(xform)
-    whr.WaitForResponse()
-    MsgBox % whr.ResponseText
+    whr.SetRequestHeader("Content-Type", "application/json")
+    whr.Send(JSON_FromObj(body))
+    try {
+        whr.WaitForResponse(5)
+        MsgBox % whr.ResponseText
+    }
+    catch e {
+        MsgBox, 16,, % e
+        whr.ResponseText := timeout
+    }
     return
 
 GuiEscape:
