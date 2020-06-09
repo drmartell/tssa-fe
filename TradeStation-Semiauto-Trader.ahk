@@ -78,12 +78,27 @@ ConstructGui:
     Gui, %GuiName%: +ToolWindow +AlwaysOnTop +Owner
     Gui, %GuiName%: Show, w370 h105, %GuiName%
     ControlFocus, TICKER, %GuiName%
+    
+    Caption%GuiName% = 1
     return
 
 GuiSize:
     WinGetTitle, thisName, A
     Gui, %thisName%: Submit, NoHide
     GuiControl, Move, ThisTabControl%thisName% , x0 y0
+    return
+
+~MButton::
+    WinGetTitle, thisName, A
+    if(Caption%GuiName% = 1) {
+        Gui, %thisName%: -Caption ; needed to set status bar text
+        Caption%GuiName% = 0
+    }
+    else {
+        Gui, %thisName%: +Caption ; needed to set status bar text
+        Caption%GuiName% = 1
+    }
+    Gui, %thisName%: Show, w370 h105
     return
     
 Quantity_:
