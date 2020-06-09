@@ -73,10 +73,10 @@ ConstructGui:
     Gui, %GuiName%: Add, Button, gSendAsk1 x+1 w30 h23, Ask>
     Gui, %GuiName%: Add, Button, gSendAsk2 x+1 w36 h23, Ask>>
     
-    Gui, %GuiName%: Add, StatusBar,, ...
+    Gui, %GuiName%: Add, StatusBar, vMyStatusBar, ...
     
     Gui, %GuiName%: +ToolWindow +AlwaysOnTop +Owner
-    Gui, %GuiName%: Show, w370 h105, %GuiName%
+    Gui, %GuiName%: Show, w370 h100, %GuiName%
     ControlFocus, TICKER, %GuiName%
     
     Caption%GuiName% = 1
@@ -89,16 +89,21 @@ GuiSize:
     return
 
 ~MButton::
+    Sleep, 50 ; allow a moment for the window to gain focus
     WinGetTitle, thisName, A
-    if(Caption%GuiName% = 1) {
-        Gui, %thisName%: -Caption ; needed to set status bar text
-        Caption%GuiName% = 0
+    if(SubStr(thisName, 1, 5) = "TSSA_") {
+        if(Caption%thisName% = 1) {
+            Gui, %thisName%: -Caption
+            GuiControl, %thisName%: Hide, MyStatusBar
+            Caption%thisName% = 0
+        }
+        else {
+            Gui, %thisName%: +Caption
+            GuiControl, %thisName%: Show, MyStatusBar
+            Caption%thisName% = 1
+        }
+        Gui, %thisName%: Show, AutoSize ; w370 h100
     }
-    else {
-        Gui, %thisName%: +Caption ; needed to set status bar text
-        Caption%GuiName% = 1
-    }
-    Gui, %thisName%: Show, w370 h105
     return
     
 Quantity_:
@@ -174,11 +179,13 @@ Subscribe:
     try {
         whr.WaitForResponse(5)
         ; ShowMsg(whr.ResponseText)
-        SB_SetText(whr.ResponseText)
+        response := whr.ResponseText
+        SB_SetText(Ticker%thisName% . ": " . response)
     }
     catch e {
         ShowMsg(e)
         whr.ResponseText := timeout
+        SB_SetText(Ticker%thisName%)
     }
     return
 
