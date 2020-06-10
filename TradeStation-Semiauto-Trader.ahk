@@ -218,7 +218,7 @@ SendManualOrder(entryType) {
     sideString%thisName% := Side%thisName% = 1 ? "LONG" : "SHORT"
     osoString%thisName% := OSO%thisName% = 1 ? "TRUE" : "FALSE"
     orderUrl := serverUrl . "manual-order"
-    body := ({"ticker":Ticker%thisName%, "side":sideString%thisName%, "risk_manual":RiskManual%thisName%, "oso":osoString%thisName%, "shares":Shares%thisName%, "entry_type":entryType})
+    body := ({"ticker":Ticker%thisName%, "side":sideString%thisName%, "risk_manual":-RiskManual%thisName%, "oso":osoString%thisName%, "shares":Shares%thisName%, "entry_type":entryType}) ; note sending RiskManual as a negative value to signal a manual stop level for the back end
     whr.Open("POST", orderUrl, true)
     whr.SetRequestHeader("Content-Type", "application/json")
     whr.Send(JSON_FromObj(body))
